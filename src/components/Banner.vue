@@ -42,6 +42,10 @@ export default {
       if(key==="6"){
         this.$router.push("/newartic");
       }
+      if(key === "4"){
+        this.$router.push("/friends");
+      }
+      
       console.log(key, keyPath);
     }
   }

@@ -6,6 +6,7 @@ import Main from '@/components/Main'
 import ArticleContent from '@/components/ArticleContent'
 import MyBlogArticle from '@/components/MyBlogArticle'
 import NewArticle from '@/components/NewArticle'
+import MyFriends from '@/components/MyFriends'
 
 Vue.use(Router)
 
@@ -30,6 +31,10 @@ export default new Router({
       path: '/newartic',
       name: 'NewArticle',
       component: NewArticle
+    },{
+      path: '/friends',
+      name: 'MyFriends',
+      component: MyFriends
     }
   ]
 }) 
