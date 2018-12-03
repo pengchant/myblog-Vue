@@ -45,6 +45,9 @@ export default {
       if(key === "4"){
         this.$router.push("/friends");
       }
+      if(key === "3"){
+        this.$router.push("/myinfo");
+      }
       
       console.log(key, keyPath);
     }

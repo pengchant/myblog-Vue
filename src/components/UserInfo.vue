@@ -13,22 +13,22 @@
         </el-main>
         <el-footer>
           <el-row style="text-align:center;margin-bottom:10px;">
-            <a href="#" style="text-decoration:none; ">小鹏要逆袭</a>
+            <router-link to="/" style="text-decoration:none; ">小鹏要逆袭</router-link>
           </el-row>
           <ul class="list_info">
             <li>
-              <a href="#">
+              <router-link to="/myarticle">
                 <el-tag type="success" style="margin-left: -10px;">
                   <span class>发文&nbsp; 111</span>
                 </el-tag>
-              </a>
+              </router-link>
             </li>
             <li>
-              <a href="#">
+              <router-link to="/friends">
                 <el-tag type="danger">
                   <span class>人脉&nbsp; 120</span>
                 </el-tag>
-              </a>
+              </router-link>
             </li>
           </ul>
         </el-footer>
