@@ -5,7 +5,10 @@ import MyHttp from './getdata'
 
 export default{
     userLogin :  (user) => MyHttp.post('/user/login', user),
-    userLogout : (userId) => MyHttp.post('/user/logout', userId)
+    userLogout : (user) => MyHttp.post('/user/logout', user),
+    validateUser: (data)=> MyHttp.post('/user/isaleadyexis', data),
+    sendEmail: (data) => MyHttp.post('/user/sendemail', data),
+    registUser: (registform) => MyHttp.post('/user/regist', registform)
 }
  
 

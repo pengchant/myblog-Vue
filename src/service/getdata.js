@@ -37,8 +37,8 @@ async function formateReq(url = '', data = {}, type = "GET") {
             if (loadingInstance !== null) {
                 loadingInstance.close();
             } 
-            let req_url = res.request.responseURL || "";
-            if(req_url.indexOf("login")!== -1){
+            let req_url = res.request.responseURL || ""; 
+            if(req_url.indexOf("login")!== -1 && res.data.ok==true){ 
                 // 设置localstorage 
                 mylocalstorage.set("x-auth-token", res.data.data.token||""); 
             } 
@@ -64,7 +64,7 @@ async function formateReq(url = '', data = {}, type = "GET") {
         instance({
             method: type,
             headers: {
-                'content-Type': 'application/json'
+                'content-Type': 'application/json;charset=UTF-8'
             },
             url: url,
             data: data // java后台

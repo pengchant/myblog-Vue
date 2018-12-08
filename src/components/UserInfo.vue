@@ -5,7 +5,7 @@
         <el-main style="text-align:center;">
           <a href="#">
             <img
-              src="https://avatar.csdn.net/4/2/9/1_w3chhhhhh.jpg?1543729025"
+              :src="faceurl"
               alt
               class="head_img"
             >
@@ -13,20 +13,24 @@
         </el-main>
         <el-footer>
           <el-row style="text-align:center;margin-bottom:10px;">
-            <router-link to="/" style="text-decoration:none; ">小鹏要逆袭</router-link>
+            <router-link to="/" style="text-decoration:none; ">{{ nickname }}</router-link>
           </el-row>
           <ul class="list_info">
             <li>
               <router-link to="/myarticle">
                 <el-tag type="success" style="margin-left: -10px;">
-                  <span class>发文&nbsp; 111</span>
+                  <span
+                    class
+                  >发文&nbsp; {{  articles }}</span>
                 </el-tag>
               </router-link>
             </li>
             <li>
               <router-link to="/friends">
                 <el-tag type="danger">
-                  <span class>人脉&nbsp; 120</span>
+                  <span
+                    class
+                  >人脉&nbsp; {{ friends }}</span>
                 </el-tag>
               </router-link>
             </li>
@@ -38,10 +42,43 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
+
 export default {
   name: "UserInfo",
   data() {
     return {};
+  },
+  computed: {
+    ...mapState(["userinfo"]),
+    faceurl: function() {
+      let img_url = require("../assets/logo.png");
+      if (this.userinfo != null) {
+        img_url = this.userinfo.headimgurl || img_url;
+      }
+      return img_url;
+    },
+    nickname: function() {
+      let nick_name = "youke";
+      if (this.userinfo != null) {
+        nick_name = this.userinfo.nickname || nick_name;
+      }
+      return nick_name;
+    },
+    friends: function() {
+      let friend_num = "0";
+      if (this.userinfo != null) {
+        friend_num = this.userinfo.friends || friend_num;
+      }
+      return friend_num;
+    },
+    articles: function() {
+      let art_num = "0";
+      if (this.userinfo != null) {
+        art_num = this.userinfo.articles || art_num;
+      }
+      return art_num;
+    }
   }
 };
 </script>
@@ -53,6 +90,7 @@ export default {
   border-radius: 50%;
   margin: 0 auto;
   margin-top: 16px;
+  background-size:100%;
 }
 
 .userinfo {

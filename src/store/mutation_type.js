@@ -1,0 +1,2 @@
+export const RECORD_USERINFO = "RECORD_USERINFO"; 
+export const QUIT_LOGIN = "QUIT_LOGIN";

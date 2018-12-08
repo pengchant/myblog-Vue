@@ -2,28 +2,7 @@
   <div class="main">
     <!-- 文章列表 -->
     <ArticleItem v-for="article in articles" :article="article" :key="article.id"></ArticleItem>
-
-    <!-- 测试后台 -->
-    <el-row>
-      <el-form ref="form" :model="user" label-width="80px">
-        <el-form-item label="用户名">
-          <el-input v-model="user.userId"></el-input>
-        </el-form-item>
-        <el-form-item label="密码">
-          <el-input v-model="user.pwd" type="password"></el-input>
-        </el-form-item>
-
-        <el-form-item>
-          <el-button type="primary" @click="onSubmit">立即创建</el-button>
-          <el-button>取消</el-button>
-        </el-form-item>
-      </el-form>
-    </el-row>
-    {{ loginmsg }}
-    <el-row>
-      <el-button @click="logout" type="success">退出登录</el-button>
-    </el-row>
-    {{ logoutmsg }}
+ 
     <!-- 分页 -->
     <el-row style="text-align:center;margin-top: 20px;">
       <el-pagination background layout="prev, pager, next" :total="1000"></el-pagination>
@@ -82,28 +61,7 @@ export default {
     ArticleItem
   },
   methods: {
-    onSubmit: function() {
-      // 登录
-      var vm = this;
-      this.$api
-        .userLogin(this.user)
-        .then(r => {
-          this.loginmsg = r.data;  
-        })
-        .catch(e => {
-          console.log(e);
-        });
-    },
-    logout: function() {
-      // 退出登录
-      var vm = this;
-      this.$api
-        .userLogout(this.user.userId)
-        .then(r => {
-          this.logoutmsg = r.data;
-        })
-        .catch(e => {});
-    }
+    
   }
 };
 </script>
