@@ -3,41 +3,74 @@
     <div class="my_articleli_content">
       <!-- 标题 -->
       <div class="arc_title">
-        <router-link to="/article">{{ article.title }}</router-link>
+        <router-link :to="myarticleurl">{{ article.title }}</router-link>
       </div>
       <!-- 描述 -->
-      <p class="describtion">{{ article.describtion }}</p>
+      <p class="describtion">{{ handledescribtion(article.describtion) }}</p>
       <!--作者信息-->
       <div class="article_footer">
         <span class="arc_userinfo">
           <a href="#">
-            <img src="https://avatar.csdn.net/4/2/9/1_w3chhhhhh.jpg?1543729025" alt class="user_arc_img">
-            <span class="arc_username">{{ article.username }}</span>
+            <img :src="handleHeaderimg(article.imgurl)" alt class="user_arc_img">
+            <span class="arc_username">{{ article.nickname }}</span>
           </a>
           <span class="el-icon-time arc_subtime">&nbsp;{{ article.subtime }}</span>
         </span>
-        <span class="viewed el-icon-view">&nbsp;阅读量：{{ article.viewed }}</span>
+        <span class="viewed el-icon-view">&nbsp;阅读量：{{ handlerViewd(article.viewed) }}</span>
       </div>
     </div>
   </el-card>
 </template>
 
-<script>
+<script> 
 export default {
   name: "ArticleItem",
   props: {
     article: {
-      id: "",
-      title: "",
-      describtion: "",
-      imgurl: "",
-      username: "",
-      subtime: "",
-      viewed: ""
+      articleid: "", // 文章编号
+      describtion: "", // 描述
+      imgurl: "", // 头像url
+      nickname: "", // 昵称
+      suberid: "", // 提交者编号
+      subtime: "", // 提交时间
+      title: "", // 标题
+      viewed: "" // 阅览次数
     }
   },
   data() {
-    return {};
+    return {
+      myarticleurl: ""
+    };
+  },
+  beforeCreate() {},
+  created() {
+    
+  },
+  computed: { 
+  },
+  mounted() {
+    this.myarticleurl = "/article?arcid=" + this.article.articleid;
+  },
+  methods: {
+    handlerViewd: value => {
+      if (value == null || value === "null") {
+        value = 0;
+      }
+      return value;
+    },
+    handleHeaderimg: value => {
+      if (value == null || value === "null") {
+        let img_url = require("../assets/logo.png");
+        value = img_url;
+      }
+      return value;
+    },
+    handledescribtion: value => {
+      if (value != null && value.length > 50) {
+        value = value.substr(0, 50) + "......";
+      }
+      return value;
+    }
   }
 };
 </script>
@@ -66,7 +99,6 @@ export default {
 
 /*description*/
 .describtion {
-  color: #8a8a8a;
   font-size: 15px;
   line-height: 24px;
 }
@@ -87,7 +119,6 @@ export default {
   width: 25px;
   height: 25px;
   border-radius: 50%;
-  background: gray;
   display: inline-block;
   position: absolute;
   margin-top: -6px;
@@ -98,10 +129,10 @@ export default {
 }
 
 .arc_username {
-    margin-left: 30px;
+  margin-left: 30px;
 }
 
 .arc_warpper:hover {
-    background: #f3f3f3;
+  background: #f3f3f3;
 }
 </style>

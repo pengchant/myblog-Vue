@@ -104,9 +104,11 @@
 </template>
 
 <script>
-import { mapState, mapActions, mapMutations } from "vuex";
+import { mapState, mapActions, mapMutations, mapGetters } from "vuex";
 import { userInfo } from "os";
 import crypto from 'crypto';
+import mylocalstorage from '@/common/localstorage'
+
 
 export default {
   name: "Banner",
@@ -304,13 +306,9 @@ export default {
               .userLogout({
                 userid: vm.userinfo.userId
               })
-              .then(r => {
-                if (r.data.ok) {
-                  vm.QUIT_LOGIN();
-                } else { 
-                  this.$message.error(r.data.msg);
+              .then(r => { 
+                  vm.QUIT_LOGIN(); 
                   this.$router.push("/");
-                }
               })
               .catch(e => {
                 console.log(e);
@@ -417,6 +415,15 @@ export default {
       md5.update(data);
       a = md5.digest('hex');
       return a;
+    }
+  },
+  created(){ 
+    // 判断是否state表示为未曾登录，而localstorage有值
+    let localislogined = JSON.parse(mylocalstorage.get("islogined"));
+    if(this.islogined == false && localislogined == true){
+        // 读取缓存
+        let localuserinfo = mylocalstorage.get("userinfo");
+        this.RECORD_USERINFO(JSON.parse(localuserinfo));
     }
   }
 };

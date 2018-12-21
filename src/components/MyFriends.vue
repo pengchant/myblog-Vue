@@ -34,22 +34,22 @@ export default {
       friends: [
         {
           id: "1",
-          userface: "https://avatar.csdn.net/4/2/9/1_w3chhhhhh.jpg?1543729025",
+          userface: "",
           nickname: "小鹏要逆袭"
         },
         {
           id: "2",
-          userface: "https://avatar.csdn.net/4/2/9/1_w3chhhhhh.jpg?1543729025",
+          userface: "",
           nickname: "小鹏要逆袭"
         },
         {
           id: "3",
-          userface: "https://avatar.csdn.net/4/2/9/1_w3chhhhhh.jpg?1543729025",
+          userface: "",
           nickname: "南京大学"
         },
         {
           id: "4",
-          userface: "https://avatar.csdn.net/4/2/9/1_w3chhhhhh.jpg?1543729025",
+          userface: "",
           nickname: "南京航空航天大学"
         }
       ]

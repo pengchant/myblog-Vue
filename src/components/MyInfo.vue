@@ -5,7 +5,7 @@
       <el-row>
         <el-col :span="10" style="text-align:center;">
           <a href="#">
-            <img src="https://avatar.csdn.net/4/2/9/1_w3chhhhhh.jpg?1543814186" alt class="head">
+            <img src="" alt class="head">
           </a>
 
           <p>

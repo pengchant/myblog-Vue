@@ -10,8 +10,14 @@ Vue.use(Vuex)
  * vuex 的全局状态
  */
 const state = {
-	islogined: false, // 是否已经登录
-	userinfo: null, // 用户的信息
+	islogined: false,    // 是否已经登录
+	userinfo: null,      // 用户的信息
+	myarticlelist: {     // 用户的所有的文章列表 
+		pageno: 1,       // 页号
+		pagesize: 10,    // 页面大小
+		total: 0,        // 一共多少数据
+		articlelsit: [], // 文章列表
+	}, 
 }
  
 export default new Vuex.Store({
