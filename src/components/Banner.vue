@@ -1,7 +1,7 @@
 <template>
   <div class="my_banner">
     <el-menu
-      :default-active="activeIndex"
+      :default-active="currentactiveindex"
       class="el-menu-demo"
       mode="horizontal"
       @select="handleSelect"
@@ -106,9 +106,8 @@
 <script>
 import { mapState, mapActions, mapMutations, mapGetters } from "vuex";
 import { userInfo } from "os";
-import crypto from 'crypto';
-import mylocalstorage from '@/common/localstorage'
-
+import crypto from "crypto";
+import mylocalstorage from "@/common/localstorage";
 
 export default {
   name: "Banner",
@@ -167,7 +166,7 @@ export default {
       if (value === "") {
         callback(new Error("请输入密码"));
       } else {
-        if(value!=undefined&&(value.length<6||value.length>20)){
+        if (value != undefined && (value.length < 6 || value.length > 20)) {
           callback(new Error("对不起密码长度在6~20之间"));
         }
         if (this.registinfo.confirmpass !== "") {
@@ -181,13 +180,12 @@ export default {
         callback(new Error("请再次输入密码"));
       } else if (value !== this.registinfo.password) {
         callback(new Error("两次输入密码不一致!"));
-      } else { 
+      } else {
         callback();
       }
     };
 
     return {
-      activeIndex: "1", // 激活
       input_search: "", // 输入框
       dialogVisible: false, // 登录/注册框显示隐藏
       islogin: true, // 是否为登录
@@ -264,11 +262,13 @@ export default {
     };
   },
   computed: {
-    ...mapState(["islogined", "userinfo"]), 
+    ...mapState(["islogined", "userinfo", "currentactiveindex"])
   },
   methods: {
-    ...mapMutations(["RECORD_USERINFO","QUIT_LOGIN"]),
+    ...mapMutations(["RECORD_USERINFO", "QUIT_LOGIN", "SET_ACTIVEINDEX"]),
     handleSelect(key, keyPath) {
+      // 设置激活框
+      this.SET_ACTIVEINDEX(key);
       if (key === "1") {
         this.$router.push("/");
       } else if (key !== "5") {
@@ -286,9 +286,10 @@ export default {
           if (key === "3") {
             this.$router.push("/myinfo");
           }
-        } else {
-          this.activeIndex = "1";
+        } else { 
           this.$message.error("请先登录！");
+          // 设置
+          this.SET_ACTIVEINDEX("1");
         }
       }
 
@@ -301,14 +302,13 @@ export default {
           type: "warning"
         })
           .then(() => {
-            console.log("退出登录");
             vm.$api
               .userLogout({
                 userid: vm.userinfo.userId
               })
-              .then(r => { 
-                  vm.QUIT_LOGIN(); 
-                  this.$router.push("/");
+              .then(r => {
+                vm.QUIT_LOGIN();
+                this.$router.push("/");
               })
               .catch(e => {
                 console.log(e);
@@ -319,7 +319,15 @@ export default {
           });
       }
 
-      console.log(key);
+      // 个人信息
+      if (key === "5-3") {
+        this.$router.push("/myinfo");
+        this.SET_ACTIVEINDEX("3");
+      }
+
+      if (key === "5-2") {
+        this.$message.info("太懒了，不想做了~");
+      }
     },
     registDialog: function() {
       this.islogin = false;
@@ -346,37 +354,37 @@ export default {
                 } else {
                   this.$message.error(response.msg);
                 }
-                console.log(response);
               })
               .catch(e => {
                 console.log(e);
               });
           } else if (formName === "registinfo") {
             // 注册
-            this.$api.registUser({
-              nickname: this.registinfo.nickname,
-              email: this.registinfo.email,
-              validatecode: this.registinfo.validatecode,
-              password: this.getmd5(this.registinfo.password), // md5加密
-              confirmpass: this.getmd5(this.registinfo.confirmpass)
-            })
-            .then(r=>{
-               if(r.data.ok){
-                 this.$message.success("注册成功!");
-                 this.logininfo.account = this.registinfo.email;
-                 this.logininfo.pwd = this.registinfo.password;
-                 this.islogin = true;
-                 this.resetForm('registinfo');
-               }else { 
-                 this.$message.error(r.data.msg);
-               }
-            }).catch(e=>{
-              console.log(e);
-              this.$message.error("注册失败，请重试!")
-            })
+            this.$api
+              .registUser({
+                nickname: this.registinfo.nickname,
+                email: this.registinfo.email,
+                validatecode: this.registinfo.validatecode,
+                password: this.getmd5(this.registinfo.password), // md5加密
+                confirmpass: this.getmd5(this.registinfo.confirmpass)
+              })
+              .then(r => {
+                if (r.data.ok) {
+                  this.$message.success("注册成功!");
+                  this.logininfo.account = this.registinfo.email;
+                  this.logininfo.pwd = this.registinfo.password;
+                  this.islogin = true;
+                  this.resetForm("registinfo");
+                } else {
+                  this.$message.error(r.data.msg);
+                }
+              })
+              .catch(e => {
+                console.log(e);
+                this.$message.error("注册失败，请重试!");
+              });
           }
         } else {
-          console.log("error submit!!");
           return false;
         }
       });
@@ -385,18 +393,20 @@ export default {
       // 重置表单
       this.$refs[formName].resetFields();
     },
-    handlevalibtn: function() { // 点击发送邮件
+    handlevalibtn: function() {
+      // 点击发送邮件
       this.isValiDisabled = true;
       this.btnvalitext = "请在" + this.timer + "s后重试";
       // 执行发送邮件逻辑
-      this.$api.sendEmail({
-        touser: this.registinfo.email,
-        nickname: this.registinfo.nickname
-      }).then(r=>{
-        console.log(r);
-      }).catch(e=>{
-        this.$message.errror("对不起发送失败请稍后重试！");
-      });
+      this.$api
+        .sendEmail({
+          touser: this.registinfo.email,
+          nickname: this.registinfo.nickname
+        })
+        .then(r => {})
+        .catch(e => {
+          this.$message.errror("对不起发送失败请稍后重试！");
+        });
       let thtimer = setInterval(() => {
         if (this.timer > 0) {
           this.timer--;
@@ -409,21 +419,27 @@ export default {
         }
       }, 1000);
     },
-    getmd5: function(data){ // md5加密
+    getmd5: function(data) {
+      // md5加密
       var a;
       var md5 = crypto.createHash("md5");
       md5.update(data);
-      a = md5.digest('hex');
+      a = md5.digest("hex");
       return a;
     }
   },
-  created(){ 
+  created() {
     // 判断是否state表示为未曾登录，而localstorage有值
-    let localislogined = JSON.parse(mylocalstorage.get("islogined"));
-    if(this.islogined == false && localislogined == true){
-        // 读取缓存
-        let localuserinfo = mylocalstorage.get("userinfo");
-        this.RECORD_USERINFO(JSON.parse(localuserinfo));
+    let localislogined = JSON.parse(mylocalstorage.get("islogined")); 
+    if (this.islogined == false && localislogined == true) {
+      // 读取缓存
+      let localuserinfo = mylocalstorage.get("userinfo");
+      this.RECORD_USERINFO(JSON.parse(localuserinfo));
+    }
+
+    let current = mylocalstorage.get("current"); 
+    if(current != undefined){ 
+      this.SET_ACTIVEINDEX(String(current));
     }
   }
 };

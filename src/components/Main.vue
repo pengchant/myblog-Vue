@@ -64,8 +64,7 @@ export default {
           this.total = mydata.total;
           this.pagecount = mydata.pages;
         })
-        .catch(e => {
-          console.log(e);
+        .catch(e => { 
         });
     }
   }

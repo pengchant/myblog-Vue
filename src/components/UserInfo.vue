@@ -4,35 +4,27 @@
       <el-container>
         <el-main style="text-align:center;">
           <a href="#">
-            <img
-              :src="faceurl"
-              alt
-              class="head_img"
-            >
+            <img :src="getuserimgurl()" alt class="head_img">
           </a>
         </el-main>
         <el-footer>
           <el-row style="text-align:center;margin-bottom:10px;">
-            <router-link to="/" style="text-decoration:none; ">{{ nickname }}</router-link>
+            <a style="cursor:pointer;" @click="handleinfo">{{ nickname }}</a>
           </el-row>
           <ul class="list_info">
             <li>
-              <router-link to="/myarticle">
+              <a style="cursor:pointer;" @click="handlearticle">
                 <el-tag type="success" style="margin-left: -10px;">
-                  <span
-                    class
-                  >发文&nbsp; {{  articles }}</span>
+                  <span class>发文&nbsp; {{ articles }}</span>
                 </el-tag>
-              </router-link>
+              </a>
             </li>
             <li>
-              <router-link to="/friends">
+              <a style="cursor:pointer;" @click="handlefriends">
                 <el-tag type="danger">
-                  <span
-                    class
-                  >人脉&nbsp; {{ friends }}</span>
+                  <span class>人脉&nbsp; {{ friends }}</span>
                 </el-tag>
-              </router-link>
+              </a>
             </li>
           </ul>
         </el-footer>
@@ -42,7 +34,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapGetters, mapMutations } from "vuex";
 
 export default {
   name: "UserInfo",
@@ -51,6 +43,7 @@ export default {
   },
   computed: {
     ...mapState(["userinfo"]),
+    ...mapGetters(["getuserimgurl"]),
     faceurl: function() {
       let img_url = require("../assets/logo.png");
       if (this.userinfo != null) {
@@ -79,6 +72,33 @@ export default {
       }
       return art_num;
     }
+  },
+  methods: {
+    ...mapMutations(["SET_ACTIVEINDEX"]),
+    handlearticle() {
+      if (this.userinfo !== null) {
+        this.$router.push("/myarticle");
+        this.SET_ACTIVEINDEX("2");
+      } else {
+        this.$message.error("请登录");
+      }
+    },
+    handlefriends() {
+      if (this.userinfo !== null) {
+        this.$router.push("/friends");
+        this.SET_ACTIVEINDEX("4");
+      } else {
+        this.$message.error("请登录");
+      }
+    },
+    handleinfo() {
+      if (this.userinfo !== null) {
+        this.$router.push("/myinfo");
+        this.SET_ACTIVEINDEX("3");
+      } else {
+        this.$message.error("请登录");
+      }
+    }
   }
 };
 </script>
@@ -90,7 +110,7 @@ export default {
   border-radius: 50%;
   margin: 0 auto;
   margin-top: 16px;
-  background-size:100%;
+  background-size: 100%;
 }
 
 .userinfo {

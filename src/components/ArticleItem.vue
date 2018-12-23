@@ -10,8 +10,8 @@
       <!--作者信息-->
       <div class="article_footer">
         <span class="arc_userinfo">
-          <a href="#">
-            <img :src="handleHeaderimg(article.imgurl)" alt class="user_arc_img">
+          <a @click="handleuser" style="cursor:pointer">
+            <img :src="getuserimgurl(article.imgurl)" alt class="user_arc_img">
             <span class="arc_username">{{ article.nickname }}</span>
           </a>
           <span class="el-icon-time arc_subtime">&nbsp;{{ article.subtime }}</span>
@@ -22,7 +22,9 @@
   </el-card>
 </template>
 
-<script> 
+<script>
+import { mapGetters, mapState } from "vuex";
+
 export default {
   name: "ArticleItem",
   props: {
@@ -39,17 +41,19 @@ export default {
   },
   data() {
     return {
-      myarticleurl: ""
+      myarticleurl: "",
+      touser: ""
     };
   },
   beforeCreate() {},
-  created() {
-    
-  },
-  computed: { 
+  created() {},
+  computed: {
+    ...mapGetters(["getuserimgurl"]),
+    ...mapState(['userinfo'])
   },
   mounted() {
     this.myarticleurl = "/article?arcid=" + this.article.articleid;
+    this.touser = "/bloguser?userid=" + this.article.suberid;
   },
   methods: {
     handlerViewd: value => {
@@ -70,6 +74,13 @@ export default {
         value = value.substr(0, 50) + "......";
       }
       return value;
+    },
+    handleuser() {
+      if (this.userinfo != null) {
+        this.$router.push(this.touser);
+      } else {
+        this.$message.error("请先登录！");
+      }
     }
   }
 };

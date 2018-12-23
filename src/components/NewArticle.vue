@@ -58,8 +58,7 @@ export default {
               suber: this.userinfo.userId, // 发布者
               describ: this.describ // 简述
             })
-            .then(r => { 
-              console.log(r)
+            .then(r => {  
               if (r.data.ok) {
                 this.tilecontent = "";
                 this.editorContent = "";
@@ -76,8 +75,7 @@ export default {
               this.$message.error("对不起添加失败，请稍后重试!");
             });
         })
-        .catch(e => {
-          console.log(e);
+        .catch(e => { 
         });
     },
     clearconent: function(){

@@ -18,6 +18,7 @@ const state = {
 		total: 0,        // 一共多少数据
 		articlelsit: [], // 文章列表
 	}, 
+	currentactiveindex: "1" // 当前激活
 }
  
 export default new Vuex.Store({

@@ -10,8 +10,6 @@ import {
  * 会调用store.commit()来调用更改 Store 中的状态。
  */
 
-
-
 export default {
     getMyArticle({
         commit,

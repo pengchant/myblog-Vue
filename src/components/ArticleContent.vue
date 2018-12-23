@@ -9,10 +9,10 @@
       <!-- 作者信息 -->
       <div class="myartcile_headline">
         <span class="el-icon-date">&nbsp;{{ subtime }}</span>
-        <router-link to="/" style="margin-left:20px;">
+        <a style="margin-left:20px;">
           <span class="el-icon-edit"></span>
           &nbsp;{{ suber }}
-        </router-link>
+        </a>
         <span style="float:right;" class="el-icon-view">&nbsp;阅读数：{{ views }}</span>
       </div>
     </el-row>
@@ -28,23 +28,25 @@
     <!-- 评论 -->
     <el-row>
       <div class="comments">评论：
-        <div class="endit">
-          <el-form>
-            <el-form-item>
-              <el-col :span="2">
-                <img class="user_face" src alt>
-              </el-col>
-              <el-col :span="10">
-                <el-input type="textarea" placeholder="输入评论内容"></el-input>
-              </el-col>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click="makeComments">评论</el-button>
-              <el-button>取消</el-button>
-            </el-form-item>
-          </el-form>
+        <div v-if="islogined">
+          <div class="endit">
+            <el-form>
+              <el-form-item>
+                <el-col :span="2">
+                  <img class="user_face" :src="getuserimgurl()" alt>
+                </el-col>
+                <el-col :span="10">
+                  <el-input type="textarea" v-model="addedcomments" placeholder="输入评论内容"></el-input>
+                </el-col>
+              </el-form-item>
+              <el-form-item>
+                <el-button type="primary" @click="addComments">评论</el-button>
+                <el-button @click="clearInput">清空</el-button>
+              </el-form-item>
+            </el-form>
+          </div>
         </div>
-
+        <p v-else style="text-align:center;"><span class="el-icon-warning">请登录后再评论</span></p>
         <!-- 显示评论 -->
         <CommentsItem v-for="comment in commentLists" :key="comment.id" :comment="comment"></CommentsItem>
       </div>
@@ -67,20 +69,78 @@ export default {
       suberid: "--",
       views: "--",
       bodyhtml: "--",
-      commentLists: [
-        {
-          id: "1",
-          userfaceurl: "",
-          nickname: "小鹏",
-          message: "这是一套房间辣房间看电视",
-          commenttime: "2018-01-09"
-        }
-      ]
+      commentLists: [],
+      addedcomments: "" 
     };
   },
   methods: {
-    makeComments: function() {
-      //TODO::
+    initData() {
+      let arcid = this.$route.query.arcid;
+      this.arcid = arcid;
+      // 发起请求
+      this.$api
+        .showArticle({
+          articleid: arcid
+        })
+        .then(r => {
+          let resp = r.data.data; 
+          // 设置内容
+          this.title = resp.title;
+          this.subtime = resp.subtime;
+          this.views = resp.viewed;
+          this.bodyhtml = resp.content;
+          this.suber = resp.subername;
+          this.suberid = resp.suberid;
+          // 设置评论
+          this.commentLists = resp.articleComments;
+          // 判断当前用户是否与作者相同，如果不相同则累加阅读次数
+          if (this.userinfo.userId != this.suberid) {
+            this.$api
+              .increaseViewed(this.arcid)
+              .then(r => {
+                console.log(r);
+              })
+              .catch(e => { 
+              });
+          }
+        })
+        .catch(e => {});
+    },
+    addComments() {
+      var vm = this;
+      this.$confirm("是否提交评论?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(r => {
+          // 添加评论
+          this.$api
+            .addComments({
+              articleid: vm.arcid, // 文章编号
+              suberid: vm.userinfo.userId, // 当前用户编号
+              subername: vm.userinfo.nickname, // 昵称
+              comments: vm.addedcomments // 评论内容
+            })
+            .then(r => { 
+              vm.addedcomments = "";
+              vm.$message.success("评论成功!");
+              // 重新加载数据
+              vm.$api
+                .queryComments(vm.arcid)
+                .then(r => {
+                  vm.commentLists = r.data.data;
+                })
+                .catch(e => { 
+                });
+            });
+        })
+        .catch(e => {
+          vm.addedcomments = "";
+        });
+    },
+    clearInput() {
+      this.addedcomments = "";
     }
   },
   components: {
@@ -88,39 +148,12 @@ export default {
     CommentsItem
   },
   computed: {
-    ...mapState(["islogined", "userinfo"])
+    ...mapState(["islogined", "userinfo"]),
+    ...mapGetters(["getuserimgurl"])
   },
   mounted() {
-    let arcid = this.$route.query.arcid;
-    this.arcid = arcid;
-    console.log(arcid);
-    // 发起请求
-    this.$api
-      .showArticle({
-        articleid: arcid
-      })
-      .then(r => {
-        let resp = r.data.data;
-        // 设置内容
-        this.title = resp.title;
-        this.subtime = resp.subtime;
-        this.views = resp.viewed;
-        this.bodyhtml = resp.content;
-        this.suber = resp.subername;
-        this.suberid = resp.suberid;
-        // 判断当前用户是否与作者相同，如果不相同则累加阅读次数
-        if (this.userinfo.userId != this.suberid) {
-          this.$api
-            .increaseViewed(this.arcid)
-            .then(r => {
-              console.log(r);
-            })
-            .catch(e => {
-              console.log(e);
-            });
-        }
-      })
-      .catch(e => {});
+    this.initData();
+    
   }
 };
 </script>
